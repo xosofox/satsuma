@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Satsuma · Pan & Zoom</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 24px; font-family: system-ui, sans-serif; background: #162129; color: #eef5f6; }
+        main { max-width: 1000px; margin: auto; }
+        h1 { margin-bottom: 8px; }
+        p { line-height: 1.6; color: #bbccd1; }
+        #container { position: relative; width: 100%; height: 65vh; min-height: 280px; border: 2px solid #66848c; border-radius: 12px; background: #23343d; cursor: grab; }
+        #container:active { cursor: grabbing; }
+        #dragthing { width: 1200px; height: 800px; position: relative; color: #1b2a30; background-color: #e9e4cf; background-image: linear-gradient(#85978a55 1px, transparent 1px), linear-gradient(90deg, #85978a55 1px, transparent 1px); background-size: 40px 40px; }
+        .track { position: absolute; left: 140px; top: 100px; width: 880px; height: 560px; border: 100px solid #60787e; border-radius: 180px; box-shadow: 0 0 0 4px #fff; }
+        .label { position: absolute; left: 390px; top: 345px; font-size: 32px; font-weight: bold; }
+        button { font: inherit; cursor: pointer; padding: 8px 16px; border-radius: 6px; border: 0; }
+        #marker { position: absolute; left: 180px; top: 140px; background: #ffb44b; }
+        footer { margin-top: 16px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+        section { margin-top: 32px; padding: 24px; border: 1px solid #66848c; border-radius: 12px; }
+        h2 { margin-top: 0; }
+        pre { padding: 16px; overflow-x: auto; background: #0f191f; border-radius: 8px; line-height: 1.6; color: #d9f3dc; }
+        code { font-family: ui-monospace, monospace; }
+        li { margin: 10px 0; line-height: 1.6; }
+        a { color: #ffcc85; }
+        @media (max-width: 600px) { body { padding: 12px; } section { padding: 16px; } }
+    </style>
+</head>
+<body><main>
+    <h1>Satsuma · Pan & Zoom</h1>
+    <p>Drag with the mouse and zoom with the scroll wheel. On touchscreens, pan with one finger or zoom and pan with two. The orange marker stays clickable.</p>
+    <div id="container" aria-label="Pannable and zoomable example map">
+        <div id="dragthing"><div class="track"></div><span class="label">Your content. Your viewport.</span><button id="marker">Start / Finish</button></div>
+    </div>
+    <footer><button id="reset">Reset</button><span id="status" role="status">Ready.</span></footer>
+
+    <section>
+        <h2>Try the controls</h2>
+        <ul>
+            <li><strong>Desktop:</strong> Drag with the left mouse button. Use the scroll wheel to zoom in and out at the pointer.</li>
+            <li><strong>Touch:</strong> Pan with one finger. Use two fingers to zoom and pan at the same time. Then lift one finger and keep dragging without a jump.</li>
+            <li><strong>Interaction:</strong> Click or tap the orange marker. Dragging should not trigger a click.</li>
+            <li><strong>Reset:</strong> The button below the map restores the initial view.</li>
+        </ul>
+        <p>The map uses only HTML and CSS. You can use images, SVG or your own HTML content instead. This file needs no external images or services.</p>
+    </section>
+    <section>
+        <h2>Use as an ES module</h2>
+        <p>Give the viewport a fixed height and the content its natural size. The content must be a direct child of the container.</p>
+        <pre><code>&lt;div id="viewport" style="width: 100%; height: 400px"&gt;
+    &lt;div id="content" style="width: 1200px; height: 800px"&gt;
+        Your content
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        <pre><code>import {Satsuma} from './satsuma.js';
+
+const viewer = new Satsuma(
+    document.querySelector('#viewport'),
+    document.querySelector('#content'),
+);
+
+// When removing the viewer:
+viewer.destroy();</code></pre>
+        <p>Use <code>dist/satsuma.js</code>, or use the source files with their relative <code>.js</code> imports. Load ES modules over HTTP, for example with <code>npm start</code>.</p>
+    </section>
+    <section>
+        <h2>Symfony AssetMapper</h2>
+        <p>Copy <code>dist/satsuma.js</code> to <code>assets/lib/satsuma.js</code>. In your existing AssetMapper project:</p>
+        <pre><code>// assets/app.js
+import {Satsuma} from './lib/satsuma.js';
+
+const container = document.querySelector('#viewport');
+if (container) {
+    new Satsuma(container, container.querySelector('#content'));
+}</code></pre>
+        <pre><code>{# templates/base.html.twig #}
+{{ importmap('app') }}</code></pre>
+        <p>The Symfony project needs no npm build. Satsuma has no runtime dependencies. With Stimulus, create the viewer in <code>connect()</code> and call <code>destroy()</code> in <code>disconnect()</code>.</p>
+    </section>
+    <section>
+        <h2>Classic scripts / open directly</h2>
+        <pre><code>&lt;script src="./dist/Satsuma.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+    const viewer = new Satsuma.Satsuma(container, content);
+&lt;/script&gt;</code></pre>
+        <p><code>demo/index.html</code> includes the library and example inline. Open this file directly, copy it or test it offline. Run <code>npm run build</code> to regenerate it after changes.</p>
+        <p>Zoom range: 0.1 to 8. Panning is unbounded. Avoid existing CSS transforms on the content and scaled or rotated ancestors. A current browser with Pointer Events is required.</p>
+    </section>
+<script>var Satsuma=(function(e){Object.defineProperty(e,Symbol.toStringTag,{value:`Module`});var t=class{x=0;y=0;scale=1;tempX=0;tempY=0;tempScale=1;MIN_SCALE=.1;MAX_SCALE=8;constructor(e,t){this.container=e,this.content=t}start(e){this.reset(),this.startScreenX=e.clientX,this.startScreenY=e.clientY;let t=this.content?this.content.getBoundingClientRect():{left:this.x,top:this.y};this.originX=t.left-this.x,this.originY=t.top-this.y}update(e){let t=e.scale===void 0?1:e.scale;if(!Number.isFinite(t)||t<=0)return;this.tempScale=Math.max(this.MIN_SCALE,Math.min(this.MAX_SCALE,this.scale*t));let n=this.tempScale/this.scale,r=e.clientX===void 0?this.startScreenX:e.clientX,i=e.clientY===void 0?this.startScreenY:e.clientY;this.tempX=r-this.originX-(this.startScreenX-this.originX-this.x)*n,this.tempY=i-this.originY-(this.startScreenY-this.originY-this.y)*n}done(){this.x=this.tempX,this.y=this.tempY,this.scale=this.tempScale}reset(){this.tempX=this.x,this.tempY=this.y,this.tempScale=this.scale}getValues(){return{x:this.x,y:this.y,scale:this.scale}}getTransform(){return`translate(${this.tempX}px, ${this.tempY}px) scale(${this.tempScale})`}};return e.Satsuma=class{constructor(e,n){this.container=e,this.content=n,this.pointers=new Map,this.listeners=[],this.previousStyles={touchAction:e.style.touchAction,overflow:e.style.overflow,transformOrigin:n.style.transformOrigin,transform:n.style.transform},e.style.touchAction=`none`,e.style.overflow=`hidden`,n.style.transformOrigin=`0 0`,this.translator=new t(e,n),this.addListeners()}listen(e,t,n,r){e.addEventListener(t,n,r),this.listeners.push(()=>e.removeEventListener(t,n,r))}gesture(){let e=Array.from(this.pointers.values()).slice(0,2);return e.length===1?{...e[0],distance:0}:{clientX:(e[0].clientX+e[1].clientX)/2,clientY:(e[0].clientY+e[1].clientY)/2,distance:this.calcTouchDistance(e[0],e[1])}}restart(){if(this.translator.done(),!this.pointers.size)return;let e=this.gesture();this.distance=e.distance,this.translator.start(e)}addListeners(){this.listen(this.container,`pointerdown`,e=>{e.button===0&&(this.pointers.size?this.suppressClick=!0:(this.suppressClick=!1,this.pressX=e.clientX,this.pressY=e.clientY),this.pointers.set(e.pointerId,{clientX:e.clientX,clientY:e.clientY}),this.restart())}),this.listen(this.container,`click`,e=>{this.suppressClick&&e.detail!==0&&(e.preventDefault(),e.stopImmediatePropagation(),this.suppressClick=!1)},!0);let e=this.container.ownerDocument;this.listen(e,`pointermove`,e=>{if(!this.pointers.has(e.pointerId))return;Math.hypot(e.clientX-this.pressX,e.clientY-this.pressY)>4&&(this.suppressClick=!0),this.pointers.set(e.pointerId,{clientX:e.clientX,clientY:e.clientY});let t=this.gesture();this.translator.update({...t,scale:this.distance>0?t.distance/this.distance:1}),t.distance>0&&!this.distance&&this.restart(),this.drag()});let t=e=>{this.pointers.delete(e.pointerId)&&this.restart()};this.listen(e,`pointerup`,t),this.listen(e,`pointercancel`,t),this.listen(e.defaultView,`blur`,()=>{this.pointers.clear(),this.translator.done()}),this.listen(this.container,`dragstart`,e=>e.preventDefault()),this.listen(this.container,`selectstart`,e=>e.preventDefault()),this.listen(this.container,`wheel`,e=>{if(e.preventDefault(),this.pointers.size||!Number.isFinite(e.deltaY)||e.deltaY===0)return;let t=e.deltaMode===1?16:e.deltaMode===2?this.container.clientHeight:1;this.translator.start(e),this.translator.update({clientX:e.clientX,clientY:e.clientY,scale:Math.exp(Math.max(-10,Math.min(10,-e.deltaY*t*.002)))}),this.translator.done(),this.drag()},{passive:!1})}drag(){this.content.style.transform=this.translator.getTransform()}calcTouchDistance(e,t){return Math.hypot(e.clientX-t.clientX,e.clientY-t.clientY)}destroy(){this.listeners.forEach(e=>e()),this.listeners=[],this.pointers.clear(),this.container.style.touchAction=this.previousStyles.touchAction,this.container.style.overflow=this.previousStyles.overflow,this.content.style.transformOrigin=this.previousStyles.transformOrigin,this.content.style.transform=this.previousStyles.transform}},e})({});
+</script>
+<script type="text/javascript">{
+const {Satsuma} = window.Satsuma;
+
+const container = document.getElementById('container');
+const content = document.getElementById('dragthing');
+let satsuma = new Satsuma(container, content);
+document.getElementById('reset').addEventListener('click', () => {
+    satsuma.destroy();
+    satsuma = new Satsuma(container, content);
+});
+document.getElementById('marker').addEventListener('click', () => {
+    document.getElementById('status').textContent = 'Marker clicked!';
+});
+
+}</script>
+</main></body>
+</html>

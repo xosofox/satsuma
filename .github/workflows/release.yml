@@ -1,0 +1,40 @@
+name: GitHub release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+      - name: Verify tag matches package version
+        run: node --input-type=module -e 'import fs from "node:fs"; const {version} = JSON.parse(fs.readFileSync("package.json")); if (process.env.GITHUB_REF_NAME !== `v${version}`) throw Error("Tag/version mismatch");'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+      - run: git diff --exit-code -- dist demo
+      - run: npm exec -- playwright install --with-deps chromium
+      - run: npm run test:browser
+      - run: npm pack
+      - run: git diff --exit-code -- dist demo
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: >-
+          gh release create "$RELEASE_TAG" satsuma-*.tgz
+          'demo/index.html#Offline demo (open directly in a browser)'
+          --verify-tag --title "Satsuma $RELEASE_TAG"
+          --notes-file CHANGELOG.md

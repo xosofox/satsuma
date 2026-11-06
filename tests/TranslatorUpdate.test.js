@@ -1,28 +1,19 @@
-import TranslatorUpdate from "../src/TranslatorUpdate";
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import TranslatorUpdate from '../src/TranslatorUpdate.js';
 
-test('Default values', () => {
-    const t = new TranslatorUpdate();
-
-    expect(t.scale).toBe(1);
-    expect(t.screenX).toBe(0);
-    expect(t.screenY).toBe(0);
+test('updates distinguish missing coordinates from zero', () => {
+    const defaults = new TranslatorUpdate();
+    assert.equal(defaults.scale, 1);
+    assert.equal(defaults.clientX, undefined);
+    assert.equal(defaults.clientY, undefined);
+    const update = new TranslatorUpdate({clientX: 0, clientY: 34});
+    assert.equal(update.clientX, 0);
+    assert.equal(update.clientY, 34);
 });
 
-test('Modified Values', () => {
-    const t = new TranslatorUpdate({
-        screenX: 34,
-    });
-
-    expect(t.scale).toBe(1);
-    expect(t.screenX).toBe(34);
-});
-
-test('Unknown key', () => {
-    console.warn = jest.fn();
-
-    const t = new TranslatorUpdate({
-        typoX: 34,
-    });
-
-    expect(console.warn.mock.calls[0][0]).toBe('Unknown key typoX');
+test('unknown update keys produce a warning', (t) => {
+    const warn = t.mock.method(console, 'warn', () => {});
+    new TranslatorUpdate({typoX: 34});
+    assert.equal(warn.mock.calls[0].arguments[0], 'Unknown key typoX');
 });
