@@ -1,14 +1,13 @@
 export default class TranslatorUpdate {
-
     scale = 1;
-    clientX = 0;
-    clientY = 0;
+    clientX = undefined;
+    clientY = undefined;
 
     constructor(params) {
         const defaults = {
             scale: 1,
-            clientX: 0,
-            clientY: 0,
+            clientX: undefined,
+            clientY: undefined,
         };
 
         params = Object.assign({}, defaults, params);
@@ -22,6 +21,4 @@ export default class TranslatorUpdate {
             }
         });
     }
-
 }
-

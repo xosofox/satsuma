@@ -1,3 +1,6 @@
 .idea
-node_modules
-examples/assets
+node_modules/
+examples/assets/
+playwright-report/
+test-results/
+*.tgz

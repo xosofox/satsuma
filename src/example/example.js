@@ -1,7 +1,12 @@
-import {Satsuma} from '../Satsuma';
+import {Satsuma} from '../Satsuma.js';
 
 const container = document.getElementById('container');
-const dragThing = document.getElementById('dragthing');
-const satsuma = new Satsuma(container, dragThing);
-console.log(satsuma);
-
+const content = document.getElementById('dragthing');
+let satsuma = new Satsuma(container, content);
+document.getElementById('reset').addEventListener('click', () => {
+    satsuma.destroy();
+    satsuma = new Satsuma(container, content);
+});
+document.getElementById('marker').addEventListener('click', () => {
+    document.getElementById('status').textContent = 'Marker angeklickt!';
+});
