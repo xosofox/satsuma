@@ -1,6 +1,6 @@
 {
   "name": "satsuma",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Dependency-free pan and pinch zoom for HTML content",
   "main": "./dist/satsuma.js",
   "module": "./dist/satsuma.js",
@@ -44,6 +44,7 @@
     "src/Satsuma.js",
     "src/Translator.js",
     "src/TranslatorUpdate.js",
+    "CHANGELOG.md",
     "README.md",
     "LICENSE"
   ],

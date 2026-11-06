@@ -20,7 +20,7 @@ const assert = require('node:assert/strict');
     await demo.locator('#marker').click();
     assert.equal(
         await demo.locator('#status').textContent(),
-        'Marker angeklickt!',
+        'Marker clicked!',
     );
     await demo.locator('#reset').click();
     await demo.locator('#marker').click();
@@ -54,7 +54,7 @@ const assert = require('node:assert/strict');
     await source.locator('#marker').click();
     assert.equal(
         await source.locator('#status').textContent(),
-        'Marker angeklickt!',
+        'Marker clicked!',
     );
     assert.deepEqual(sourceErrors, []);
     await source.close();

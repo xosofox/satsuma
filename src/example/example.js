@@ -8,5 +8,5 @@ document.getElementById('reset').addEventListener('click', () => {
     satsuma = new Satsuma(container, content);
 });
 document.getElementById('marker').addEventListener('click', () => {
-    document.getElementById('status').textContent = 'Marker angeklickt!';
+    document.getElementById('status').textContent = 'Marker clicked!';
 });

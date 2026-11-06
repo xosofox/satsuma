@@ -1,5 +1,7 @@
 # Satsuma
 
+Satsuma is "the zoomer" said with a German accent—you can make web objects zoom, pan, drag and pinch...
+
 Dependency-free pan and pinch zoom for HTML, images and SVG inside a viewport.
 
 ## Try it
