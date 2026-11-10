@@ -1,9 +1,10 @@
 import Translator from './Translator.js';
 
 export class Satsuma {
-    constructor(container, content) {
+    constructor(container, content, options = {}) {
         this.container = container;
         this.content = content;
+        this.options = {scrollRequiresCtrlKey: true, ...options};
         this.pointers = new Map();
         this.listeners = [];
         this.previousStyles = {
@@ -109,6 +110,7 @@ export class Satsuma {
             this.container,
             'wheel',
             (ev) => {
+                if (this.options.scrollRequiresCtrlKey && !ev.ctrlKey) return;
                 ev.preventDefault();
                 if (
                     this.pointers.size ||

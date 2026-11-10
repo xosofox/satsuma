@@ -47,6 +47,21 @@ The historical `dist/Satsuma.js` path remains available as a classic browser
 script, exposing `new Satsuma.Satsuma(container, content)`. It is now IIFE rather
 than UMD: CommonJS `require()` is no longer supported.
 
+## Options
+
+The optional third constructor argument is an options object:
+
+```js
+const viewer = new Satsuma(container, content, {
+    scrollRequiresCtrlKey: false,
+});
+```
+
+`scrollRequiresCtrlKey` defaults to `true`: hold Ctrl while scrolling to zoom.
+Without Ctrl, wheel events retain normal page scrolling. Set it to `false` to
+zoom immediately with the wheel, as in 1.0.0. This option does not affect touch
+panning or pinch zoom.
+
 ## Symfony AssetMapper
 
 In an existing AssetMapper application, copy `dist/satsuma.js` to
@@ -76,7 +91,7 @@ requires a separately published package under a verified available name.
 ## Interaction and constraints
 
 - Primary mouse button / one finger: pan.
-- Mouse wheel / trackpad wheel gestures: zoom at the pointer.
+- Ctrl + mouse wheel / trackpad wheel gestures: zoom at the pointer.
 - Two fingers: zoom and pan at their moving midpoint.
 - Lift one finger: continue panning without a jump.
 - Buttons/links remain clickable; drags suppress their click.

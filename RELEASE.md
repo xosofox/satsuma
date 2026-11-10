@@ -1,6 +1,10 @@
-# Preparing Satsuma 1.0.0
+# Preparing Satsuma 1.1.0
 
-Version 1.0.0 is the first stable release. Publication requires explicit maintainer approval.
+Version 1.1.0 adds optional constructor settings and requires Ctrl for wheel zoom by default. Publication requires explicit maintainer approval.
+
+## Version convention
+
+Always prefix GitHub version tags with `v` (for example, `v1.1.0`), even when a release request says `1.1.0` without the prefix. Use `1.1.0` in package.json and npm, and `Satsuma 1.1.0` as the GitHub release title.
 
 ## Validation
 
@@ -25,9 +29,9 @@ The moderate development-only minimatch advisory remains documented; do not forc
 ## Publication after approval
 
 1. Review and commit the release changes, complete CI and merge the pull request.
-2. Verify `npm whoami` identifies an account with write access to `satsuma` and that version `1.0.0` is still unused.
+2. Verify `npm whoami` identifies an account with write access to `satsuma` and that version `1.1.0` is still unused.
 3. From the reviewed release commit, run `npm publish --dry-run` and inspect the package contents.
 4. Only with explicit publication approval, run `npm publish --access public`, completing npm's authentication/2FA challenge if requested.
-5. After publication succeeds, create and push the `v1.0.0` tag for that commit. The GitHub release workflow reruns validation and creates the release with notes from `CHANGELOG.md`, the package archive and the offline demo. It does not publish to npm.
+5. After publication succeeds, create and push the `v1.1.0` tag for that commit. The GitHub release workflow reruns validation and creates the release with notes from `CHANGELOG.md`, the package archive and the offline demo. It does not publish to npm.
 
 Do not commit npm credentials or authentication tokens.

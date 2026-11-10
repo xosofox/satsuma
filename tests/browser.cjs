@@ -89,7 +89,15 @@ const assert = require('node:assert/strict');
     const anchor = {x: box.x + 350, y: box.y + 250};
     const before = await page.locator('#dragthing').boundingBox();
     await page.mouse.move(anchor.x, anchor.y);
+    await page.mouse.wheel(0, 200);
+    await page.waitForTimeout(80);
+    assert.equal((await values()).scale, 1);
+    assert.ok(await page.evaluate(() => window.scrollY > 0));
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.mouse.move(anchor.x, anchor.y);
+    await page.keyboard.down('Control');
     await page.mouse.wheel(0, -200);
+    await page.keyboard.up('Control');
     await page.waitForTimeout(80);
     const after = await page.locator('#dragthing').boundingBox();
     const v = await values();
@@ -103,6 +111,17 @@ const assert = require('node:assert/strict');
     const pan = await values();
     assert.ok(Math.abs(pan.x - v.x - 80) < 0.01);
     assert.ok(Math.abs(pan.y - v.y - 30) < 0.01);
+    await page.evaluate(() => {
+        viewer.destroy();
+        viewer = new Satsuma.Satsuma(
+            document.querySelector('#container'),
+            document.querySelector('#dragthing'),
+            {scrollRequiresCtrlKey: false},
+        );
+    });
+    await page.mouse.wheel(0, -100);
+    await page.waitForTimeout(80);
+    assert.ok((await values()).scale > 1);
     await page.evaluate(() => {
         viewer.destroy();
         viewer = new Satsuma.Satsuma(

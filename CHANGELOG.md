@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.0
+
+- Add an optional third `options` argument to the Satsuma constructor.
+- Default `scrollRequiresCtrlKey` to `true`, allowing normal page scrolling over the viewport unless Ctrl is held.
+- Set `{scrollRequiresCtrlKey: false}` to retain immediate wheel zoom from 1.0.0.
+- Touch panning and pinch zoom remain unchanged.
+
 ## 1.0.0
 
 ### Interaction fixes

@@ -36,5 +36,5 @@ jobs:
         run: >-
           gh release create "$RELEASE_TAG" satsuma-*.tgz
           'demo/index.html#Offline demo (open directly in a browser)'
-          --verify-tag --title "Satsuma $RELEASE_TAG"
+          --verify-tag --title "Satsuma ${RELEASE_TAG#v}"
           --notes-file CHANGELOG.md

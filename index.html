@@ -29,7 +29,7 @@
 </head>
 <body><main>
     <h1>Satsuma · Pan & Zoom</h1>
-    <p>Drag with the mouse and zoom with the scroll wheel. On touchscreens, pan with one finger or zoom and pan with two. The orange marker stays clickable.</p>
+    <p>Drag with the mouse and zoom with Ctrl + scroll wheel. On touchscreens, pan with one finger or zoom and pan with two. The orange marker stays clickable.</p>
     <div id="container" aria-label="Pannable and zoomable example map">
         <div id="dragthing"><div class="track"></div><span class="label">Your content. Your viewport.</span><button id="marker">Start / Finish</button></div>
     </div>
@@ -38,7 +38,7 @@
     <section>
         <h2>Try the controls</h2>
         <ul>
-            <li><strong>Desktop:</strong> Drag with the left mouse button. Use the scroll wheel to zoom in and out at the pointer.</li>
+            <li><strong>Desktop:</strong> Drag with the left mouse button. Hold Ctrl and use the scroll wheel to zoom in and out at the pointer.</li>
             <li><strong>Touch:</strong> Pan with one finger. Use two fingers to zoom and pan at the same time. Then lift one finger and keep dragging without a jump.</li>
             <li><strong>Interaction:</strong> Click or tap the orange marker. Dragging should not trigger a click.</li>
             <li><strong>Reset:</strong> The button below the map restores the initial view.</li>
@@ -62,6 +62,7 @@ const viewer = new Satsuma(
 
 // When removing the viewer:
 viewer.destroy();</code></pre>
+        <p>The optional third argument <code>{scrollRequiresCtrlKey: false}</code> enables wheel zoom without Ctrl. The default is <code>true</code>, allowing normal page scrolling without Ctrl. Touch gestures are unchanged.</p>
         <p>Use <code>dist/satsuma.js</code>, or use the source files with their relative <code>.js</code> imports. Load ES modules over HTTP, for example with <code>npm start</code>.</p>
     </section>
     <section>

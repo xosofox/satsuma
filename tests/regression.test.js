@@ -18,7 +18,7 @@ class Surface {
         for (const fn of this.listeners.get(type) || []) fn(ev);
     }
 }
-function setup() {
+function setup(options) {
     const container = new Surface();
     container.ownerDocument = new Surface();
     container.ownerDocument.defaultView = new Surface();
@@ -27,7 +27,7 @@ function setup() {
         left: 120 + s.translator.tempX,
         top: 70 + s.translator.tempY,
     });
-    const s = new Satsuma(container, content);
+    const s = new Satsuma(container, content, options);
     return {s, container, doc: container.ownerDocument};
 }
 test('pan accepts coordinates at zero', () => {
@@ -42,6 +42,7 @@ test('zoom anchors after previous pan and zoom, including layout offsets', () =>
     const {s, container} = setup();
     for (let i = 0; i < 3; i++)
         container.emit('wheel', {
+            ctrlKey: true,
             clientX: 220,
             clientY: 170,
             deltaY: -100,
@@ -53,12 +54,27 @@ test('zoom anchors after previous pan and zoom, including layout offsets', () =>
 });
 test('scale clamps using actual ratio and zero wheel stays finite', () => {
     const {s, container} = setup();
-    container.emit('wheel', {clientX: 220, clientY: 170, deltaY: -10000});
+    container.emit('wheel', {
+        ctrlKey: true,
+        clientX: 220,
+        clientY: 170,
+        deltaY: -10000,
+    });
     assert.equal(s.translator.scale, 8);
     assert.equal(s.translator.x, -700);
-    container.emit('wheel', {clientX: 220, clientY: 170, deltaY: 0});
+    container.emit('wheel', {
+        ctrlKey: true,
+        clientX: 220,
+        clientY: 170,
+        deltaY: 0,
+    });
     assert.equal(s.translator.scale, 8);
-    container.emit('wheel', {clientX: 220, clientY: 170, deltaY: 10000});
+    container.emit('wheel', {
+        ctrlKey: true,
+        clientX: 220,
+        clientY: 170,
+        deltaY: 10000,
+    });
     assert.equal(s.translator.scale, 0.1);
 });
 test('pinch midpoint pans, zooms and continues with remaining finger', () => {
@@ -97,7 +113,12 @@ test('zoom after panning keeps the same content point under the cursor', () => {
     doc.emit('pointerup', {pointerId: 1});
     const contentX = 220 - 120 - s.translator.x;
     const contentY = 170 - 70 - s.translator.y;
-    container.emit('wheel', {clientX: 220, clientY: 170, deltaY: -200});
+    container.emit('wheel', {
+        ctrlKey: true,
+        clientX: 220,
+        clientY: 170,
+        deltaY: -200,
+    });
     const t = s.translator;
     assert.ok(Math.abs((220 - 120 - t.x) / t.scale - contentX) < 1e-10);
     assert.ok(Math.abs((170 - 70 - t.y) / t.scale - contentY) < 1e-10);
@@ -118,12 +139,14 @@ test('line and pixel wheel deltas use the same zoom factor', () => {
     const a = setup();
     const b = setup();
     a.container.emit('wheel', {
+        ctrlKey: true,
         clientX: 200,
         clientY: 200,
         deltaY: -1,
         deltaMode: 1,
     });
     b.container.emit('wheel', {
+        ctrlKey: true,
         clientX: 200,
         clientY: 200,
         deltaY: -16,
@@ -142,3 +165,35 @@ test('secondary mouse button does not start a gesture', () => {
     });
     assert.equal(s.pointers.size, 0);
 });
+
+for (const options of [
+    undefined,
+    {},
+    {scrollRequiresCtrlKey: true},
+    {scrollRequiresCtrlKey: false},
+]) {
+    test(`wheel Ctrl requirement with options ${JSON.stringify(options)}`, () => {
+        const {s, container} = setup(options);
+        let prevented = false;
+        const wheel = {
+            clientX: 220,
+            clientY: 170,
+            deltaY: -100,
+            ctrlKey: false,
+            preventDefault() {
+                prevented = true;
+            },
+        };
+        container.emit('wheel', wheel);
+        const requiresCtrl = options?.scrollRequiresCtrlKey !== false;
+        assert.equal(prevented, !requiresCtrl);
+        assert.equal(s.translator.scale > 1, !requiresCtrl);
+        if (requiresCtrl) {
+            assert.equal(s.content.style.transform, '');
+            container.emit('wheel', {...wheel, ctrlKey: true});
+            assert.equal(prevented, true);
+            assert.ok(s.translator.scale > 1);
+        }
+        s.destroy();
+    });
+}

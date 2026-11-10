@@ -43,8 +43,11 @@ var e = class {
 		return `translate(${this.tempX}px, ${this.tempY}px) scale(${this.tempScale})`;
 	}
 }, t = class {
-	constructor(t, n) {
-		this.container = t, this.content = n, this.pointers = /* @__PURE__ */ new Map(), this.listeners = [], this.previousStyles = {
+	constructor(t, n, r = {}) {
+		this.container = t, this.content = n, this.options = {
+			scrollRequiresCtrlKey: !0,
+			...r
+		}, this.pointers = /* @__PURE__ */ new Map(), this.listeners = [], this.previousStyles = {
 			touchAction: t.style.touchAction,
 			overflow: t.style.overflow,
 			transformOrigin: n.style.transformOrigin,
@@ -98,7 +101,7 @@ var e = class {
 		this.listen(e, "pointerup", t), this.listen(e, "pointercancel", t), this.listen(e.defaultView, "blur", () => {
 			this.pointers.clear(), this.translator.done();
 		}), this.listen(this.container, "dragstart", (e) => e.preventDefault()), this.listen(this.container, "selectstart", (e) => e.preventDefault()), this.listen(this.container, "wheel", (e) => {
-			if (e.preventDefault(), this.pointers.size || !Number.isFinite(e.deltaY) || e.deltaY === 0) return;
+			if (this.options.scrollRequiresCtrlKey && !e.ctrlKey || (e.preventDefault(), this.pointers.size || !Number.isFinite(e.deltaY) || e.deltaY === 0)) return;
 			let t = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? this.container.clientHeight : 1;
 			this.translator.start(e), this.translator.update({
 				clientX: e.clientX,
