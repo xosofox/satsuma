@@ -1,8 +1,8 @@
 # Satsuma
 
-Satsuma is "the zoomer" said with a German accent—you can make web objects zoom, pan, drag and pinch...
+Sis is Tshurman for "The Zoomer" - said with the thickest German accent possible.
 
-Dependency-free pan and pinch zoom for HTML, images and SVG inside a viewport.
+You can make HTML objects zoom and pan and drag and pinch - dependency-free, for any HTML, images and SVG inside a viewport.
 
 ## Try it
 
@@ -22,6 +22,20 @@ npm run preview       # built offline demo at http://localhost:9124
 On a phone, open the development server at your computer's LAN IP on port 9123
 (on a trusted network). Native ES modules need HTTP; use the generated offline
 page when opening a file directly. All demo visuals use local HTML/CSS.
+
+## Install with npm
+
+For applications using a bundler or Node-aware tooling:
+
+```sh
+npm install satsuma
+```
+
+```js
+import {Satsuma} from 'satsuma';
+
+const viewer = new Satsuma(container, content);
+```
 
 ## Native ES modules
 
@@ -64,12 +78,17 @@ panning or pinch zoom.
 
 ## Symfony AssetMapper
 
-In an existing AssetMapper application, copy `dist/satsuma.js` to
-`assets/lib/satsuma.js`, then:
+In an existing AssetMapper application, install Satsuma with:
+
+```sh
+php bin/console importmap:require satsuma
+```
+
+Then import it in your application:
 
 ```js
 // assets/app.js
-import {Satsuma} from './lib/satsuma.js';
+import {Satsuma} from 'satsuma';
 
 const container = document.querySelector('#viewport');
 if (container) {
@@ -80,13 +99,10 @@ if (container) {
 
 Load the entrypoint with `{{ importmap('app') }}` in your base Twig template.
 AssetMapper handles versioned URLs; the consuming Symfony application needs no
-Node/npm build. Alternatively map the source directory and import `Satsuma.js`
-with its sibling `Translator.js` present.
+Node/npm build.
 
 With Stimulus, create the viewer in `connect()` and call `this.viewer.destroy()`
-in `disconnect()` (important with Turbo). This repository does not publish an npm
-release as part of building or opening a PR; an `importmap:require` package install
-requires a separately published package under a verified available name.
+in `disconnect()` (important with Turbo).
 
 ## Interaction and constraints
 
@@ -127,12 +143,3 @@ usable. Rebuild and commit them after source changes.
 
 Chromium's touch input is exercised via CDP. Physical-device Android/Safari testing
 is still needed before relying on the library in production.
-
-### Dependency audit
-
-The modern toolchain removes all previously reported high/critical findings.
-ESLint 10 currently brings one known moderate minimatch advisory
-(GHSA-g3hv-75wg-m249), reported against three development packages. It concerns
-pathological glob patterns; there are no runtime dependencies. ESLint 9 is already
-unsupported, so the maintained major is retained without forcing an incompatible
-transitive major override. Re-evaluate on the next ESLint/config-array update.
