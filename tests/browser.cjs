@@ -112,6 +112,19 @@ const assert = require('node:assert/strict');
     assert.ok(Math.abs(pan.x - v.x - 80) < 0.01);
     assert.ok(Math.abs(pan.y - v.y - 30) < 0.01);
     await page.evaluate(() => {
+        window.addEventListener('keydown', (event) => {
+            if (event.ctrlKey && event.key === '0') {
+                window.resetDefaultPrevented = event.defaultPrevented;
+            }
+        });
+    });
+    await page.keyboard.press('Control+0');
+    assert.deepEqual(await values(), {
+        x: 0, y: 0, scale: 1, tempX: 0, tempY: 0, tempScale: 1,
+    });
+    assert.deepEqual(await page.locator('#dragthing').boundingBox(), before);
+    assert.equal(await page.evaluate(() => window.resetDefaultPrevented), false);
+    await page.evaluate(() => {
         viewer.destroy();
         viewer = new Satsuma.Satsuma(
             document.querySelector('#container'),

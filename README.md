@@ -108,6 +108,7 @@ in `disconnect()` (important with Turbo).
 
 - Primary mouse button / one finger: pan.
 - Ctrl + mouse wheel / trackpad wheel gestures: zoom at the pointer.
+- Ctrl + 0: reset pan and zoom while allowing the browser to reset page zoom.
 - Two fingers: zoom and pan at their moving midpoint.
 - Lift one finger: continue panning without a jump.
 - Buttons/links remain clickable; drags suppress their click.

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.0
+
+- Ctrl + 0 resets the Satsuma view and lets the browser reset page zoom.
+- Call `viewer.reset()` to restore the initial pan and zoom programmatically.
+
 ## 1.1.0
 
 - Add an optional third `options` argument to the Satsuma constructor.

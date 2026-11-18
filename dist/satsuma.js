@@ -83,7 +83,9 @@ var e = class {
 			this.suppressClick && e.detail !== 0 && (e.preventDefault(), e.stopImmediatePropagation(), this.suppressClick = !1);
 		}, !0);
 		let e = this.container.ownerDocument;
-		this.listen(e, "pointermove", (e) => {
+		this.listen(e, "keydown", (e) => {
+			e.ctrlKey && e.key === "0" && this.reset();
+		}), this.listen(e, "pointermove", (e) => {
 			if (!this.pointers.has(e.pointerId)) return;
 			Math.hypot(e.clientX - this.pressX, e.clientY - this.pressY) > 4 && (this.suppressClick = !0), this.pointers.set(e.pointerId, {
 				clientX: e.clientX,
@@ -109,6 +111,9 @@ var e = class {
 				scale: Math.exp(Math.max(-10, Math.min(10, -e.deltaY * t * .002)))
 			}), this.translator.done(), this.drag();
 		}, { passive: !1 });
+	}
+	reset() {
+		this.translator = new e(this.container, this.content), this.drag(), this.restart();
 	}
 	drag() {
 		this.content.style.transform = this.translator.getTransform();

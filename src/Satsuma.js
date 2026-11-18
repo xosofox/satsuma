@@ -74,6 +74,9 @@ export class Satsuma {
             true,
         );
         const doc = this.container.ownerDocument;
+        this.listen(doc, 'keydown', (ev) => {
+            if (ev.ctrlKey && ev.key === '0') this.reset();
+        });
         this.listen(doc, 'pointermove', (ev) => {
             if (!this.pointers.has(ev.pointerId)) return;
             if (
@@ -137,6 +140,12 @@ export class Satsuma {
             },
             {passive: false},
         );
+    }
+
+    reset() {
+        this.translator = new Translator(this.container, this.content);
+        this.drag();
+        this.restart();
     }
 
     drag() {
